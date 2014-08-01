@@ -75,13 +75,13 @@ Tested with RTMPDUMP 2.4 on Win 8.1 64bit.
 		user.addNotificationEmail('bobthebuilder@gmail.com', function(err, result) {
 			if(err) console.error(err);
 			console.log(result); // This object holds the id necessary to remove the email
-		});
 
-		// Removes a notification email address from the user
-		user.removeNotificationEmail('1468847', function(err, deleted) {
-			if(err) console.error(err);
-			console.log(deleted); // This is either true or false
-		}); 
+			// Removes a notification email address from the user
+			user.removeNotificationEmail(result.id, function(err, deleted) {
+				if(err) console.error(err);
+				console.log(deleted); // This is either true or false
+			});
+		});
 		
 		// Searchs the API for a camera associated with the public token
 		// Returns the camera associated with the public id
@@ -243,29 +243,14 @@ an example.
 ### .capture(callback)
 This function will attempt to capture a live screenshot of the camera and return a screenshot
 object. This function should work on both user owned and public cameras. See above for an
-example.
-## Screenshot
-### .pipe(out)
-You can call .pipe on the object and do what you wish with the buffer, such as writing 
-to file. See above for an example
+example, and see below for object functions.
 
 ### .record(seconds, callback)
 Important: You MUST have rtmpdump installed and on your PATH to call this function (see above
 for a link). This function will attempt to record a live stream by returning you a stream object.
 You can pass in a valid number of seconds as the seconds parameter. Use 0 if you don't wish to
 stop recording until you terminate the application. Note: This function should work on both user 
-owned and public cameras. See above for an example.
-## Stream
-### .pipe(out)
-You can call .pipe on the object and do what you wish with the buffer, such as writing to file.
-See above for an example.
-
-### .on(event, callback)
-You can listen for events on this stream.
-## Event: 'data'
-You can listen for incoming standard output on this stream.
-## Event: 'error'
-You can listen for incoming error output on this stream.
+owned and public cameras. See above for an example, and see below for object functions.
 
 ### .getDevicesWithNotifications(callback)
 This function will attempt to get all devices asssociated with this camera and return an array 
@@ -280,6 +265,22 @@ the user. See above for an example.
 ### .getClips(callback)
 This function will attempt to get any video clips saved on the cloud and return an array of
 clips. See above for an example.
+
+## Screenshot
+### .pipe(out)
+You can call .pipe on the object and do what you wish with the buffer, such as writing 
+to file. See above for an example
+
+## Stream
+### .pipe(out)
+You can call .pipe on the object and do what you wish with the buffer, such as writing to file.
+See above for an example.
+### .on(event, callback)
+You can listen for events on this stream.
+### Event: 'data'
+You can listen for incoming standard output on this stream.
+### Event: 'error'
+You can listen for incoming error output on this stream.
 
 ## License
 Copyright (c) 2014 OPFL
