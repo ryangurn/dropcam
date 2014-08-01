@@ -1,0 +1,28 @@
+{
+  "name": "dropcam",
+  "version": "0.0.0",
+  "description": "Unofficial API for Dropcam",
+  "main": "./lib/dropcam.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "hyperquest": "^0.3.0",
+    "stream-array": "^0.1.3",
+    "async": "^0.9.0"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.3"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "dropcam",
+    "video",
+    "webcam",
+    "stream"
+  ],
+  "author": "opfl",
+  "license": "MIT"
+}
