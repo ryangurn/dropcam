@@ -5,7 +5,7 @@ Unofficial Dropcam API Client
 There's no public documentation for this API as most of it was reverse engineered from their private API.
 There is a beta program available to access official API resources, however they are selective
 towards who can use it. Consider this experimental until further notice as it can
-break when their private API is updated.
+break when their private API is updated. Report any bugs if you come across them.
 
 ## Features
 - Dropcam Scope
