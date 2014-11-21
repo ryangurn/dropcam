@@ -19,10 +19,10 @@ break when their private API is updated. Report any bugs if you come across them
 		- Camera Scope
 			- Settings - View, manage and modify various camera settings including visibility
 			- Screenshots - Capture live screenshots of the camera
-			- Clips - View, manage, and modify available clips (update, delete, and download)
-			- Notifications - View and modify devices that receive notifications to this camera 
+			- Clips API - View, manage, and modify available clips (update, delete, and download)
+			- Notification Devices API - View and modify devices that receive notifications to this camera
 			- Basic implementation of Subscriptions - Get all current subscriptions to this camera
-			- -Media Capture - Capture real time screenshots and live video streams (requires RTMPDUMP)- Currently disabled. See below-
+			- ~~Media Capture - Capture real time screenshots and live video streams (requires RTMPDUMP)- Currently disabled. See below~~
 
 ## TODO
 - Video/Sound Streams 
@@ -33,10 +33,10 @@ break when their private API is updated. Report any bugs if you come across them
 ## Live Video Streams
 This is currently broken as they've moved to encrypted streaming. There will probably be a fix on v1.0.1.
 
--This project depends on the use of rtmpdump to capture live video streams. Since there is no reliable
+~~This project depends on the use of rtmpdump to capture live video streams. Since there is no reliable
 native functionality to capture RTMP streams at the moment (at least to my knowledge), 
 you must download and have rtmpdump on your system PATH. To download, visit: http://rtmpdump.mplayerhq.hu/download
-Tested with RTMPDUMP 2.4 on Win 8.1 64bit.-
+Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 
 ## Installation
     $ git clone https://github.com/opfl/dropcam.git
