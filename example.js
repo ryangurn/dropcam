@@ -9,6 +9,7 @@
 		password: 'YOUR_DROPCAM_PASSWORD'
 	};
 
+	/*
 	// Example of creating a new user
 	var User = dropcam.User;
 	User.Register('NEW_USERNAME', 'NEW_PASSWORD', 'NEW_EMAIL', 
@@ -16,7 +17,7 @@
 			if(err) return console.error(err);
 			console.log('New user: %s', util.inspect(_user));	
 		}
-	);
+	);*/
 
 	// You must always call the login function before accessing the entire API
 	dropcam.login(credentials.username, credentials.password, function(err, user) {
@@ -33,11 +34,11 @@
 			if(err) console.error(err);
 			console.log('Token on demand: %s', token); // prints out this user's token
 		});
-
+		
 		// You could also access it in the user's session 
 		// without needing to make an additional API call
 		console.log('Session token: %s', user.session.token); 
-
+		
 		// Adds a new notification email address to the user
 		user.addNotificationEmail('bobthebuilder@gmail.com', function(err, result) {
 			if(err) return console.error(err);
@@ -84,7 +85,7 @@
 			
 			// View camera settings
 			console.log('Settings for Camera #1: %s', util.inspect(camera.settings));
-
+			
 			// Toggles the camera's visibility (public/private)
 			camera.toggle('private', function(err, result) { 
 				if(err) return console.error(err);
@@ -96,32 +97,16 @@
 				if(err) return console.error(err);
 				console.log('Value %s', (result ? 'has updated successfully' : 'was not updated')); // This is either true or false, depending on success
 			});
-			
+
 			// Takes a screenshot 
 			camera.capture(function(err, screenshot) { 
 				if(err) return console.error(err);
 				// You can also get the image type. It's usually a jpeg
 				console.log(screenshot.type);
 				// Writes the screenshot to file
-				screenshot.pipe(require('fs').createWriteStream('screenshot.jpeg'));
-			}); 
-			
-			/* This function has been temporarily disabled
-			// Record your camera locally (in seconds)
-			// This example shows to record for 10 seconds
-			camera.record(10, function(err, stream) { // 0 means don't stop recording
-				if(err) throw err;
-				// Listen for events
-				stream.on('data', function(data) {
-					console.log(data);
-				});
-				stream.on('error', function(error) {
-					console.log(error);
-				});
-				// Writes the stream to file
-				stream.pipe(require('fs').createWriteStream('out.flv')); 
-			});*/
-			
+				screenshot.pipe(require('fs').createWriteStream(util.format('screenshot_%s.jpeg', Date.now())));
+			});
+
 			// Find devices setup with notifications about this camera
 			camera.getNotificationDevices(function(err, devices) {
 				if(err) return console.error(err);
@@ -179,7 +164,7 @@
 						console.log('%s clip property `%s` = `%s`', (result ? 'Updated' : 'Failed to update'), pair['key'], pair['value']);
 						console.log('Calling description as property reveals new value as `%s`', selected.properties.description);
 					});
-					/*
+					/* 
 					// Example of deleting an existing clip  
 					selected.delete(function(err, result) {
 						if(err) return console.error(err);
@@ -196,6 +181,29 @@
 				if(err) return console.error(err);
 				console.log(util.inspect(results));
 			});
+			
+			// Events - These are not considered real-time as any sort
+			// of delay is expected (latency between you and dropcam's servers)
+
+			// This event captures motion-only or motion w/sound events
+			camera.on('motion', function(motion) {
+				console.log('New motion event detected: %s', util.inspect(motion));
+			});
+
+			// This event captures sound-only events
+			camera.on('sound', function(sound) {
+				console.log('New sound event detected: %s', util.inspect(sound));
+			});
+
+			// This event captures any errors that take place
+			camera.on('error', function(error) {
+				console.log('Error: %s', error);
+			});
+
+			// This must be called in order to listen to any of events occuring. You
+			// can optionally pass in a `timeout` param if you want to increase/decrease
+			// the amount milliseconds to refresh events, default is 1000 ms
+			camera.listen(100); 
 		});
 	});
 })();

@@ -7,6 +7,8 @@ There is a beta program available to access official API resources, however they
 towards who can use it. Consider this experimental until further notice as it can
 break when their private API is updated. Report any bugs if you come across them.
 
+This project is actively maintained as of 11/21/2014.
+
 ## Features
 - Dropcam Scope
 	- Search API - Find any camera publically accessable
@@ -19,15 +21,16 @@ break when their private API is updated. Report any bugs if you come across them
 		- Camera Scope
 			- Settings - View, manage and modify various camera settings including visibility
 			- Screenshots - Capture live screenshots of the camera
-			- Clips API - View, manage, and modify available clips (update, delete, and download)
-			- Notification Devices API - View and modify devices that receive notifications to this camera
+			- Clips - View, manage, and modify available clips (update, delete, and download)
+			- Notification Devices - View and modify devices that receive notifications to this camera
+			- Basic implementation of Events - Get any motion/sound events that occur with this camera
 			- Basic implementation of Subscriptions - Get all current subscriptions to this camera
-			- ~~Media Capture - Capture real time screenshots and live video streams (requires RTMPDUMP)- Currently disabled. See below~~
+			- ~~Media Capture - Capture real time screenshots and live video streams (requires RTMPDUMP)~~
 
 ## TODO
-- Video/Sound Streams 
 - Subscriptions - Manage and modify subscriptions (partially implemented)
-- Events - Capture motion/sound events (partially implemented)
+- Capture Video/Sound Streams with the ability to talkback 
+- Meaningful Events
 - Tests
 
 ## Live Video Streams
@@ -57,6 +60,7 @@ Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 		password: 'YOUR_DROPCAM_PASSWORD'
 	};
 
+	/*
 	// Example of creating a new user
 	var User = dropcam.User;
 	User.Register('NEW_USERNAME', 'NEW_PASSWORD', 'NEW_EMAIL', 
@@ -64,7 +68,7 @@ Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 			if(err) return console.error(err);
 			console.log('New user: %s', util.inspect(_user));	
 		}
-	);
+	);*/
 
 	// You must always call the login function before accessing the entire API
 	dropcam.login(credentials.username, credentials.password, function(err, user) {
@@ -81,11 +85,11 @@ Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 			if(err) console.error(err);
 			console.log('Token on demand: %s', token); // prints out this user's token
 		});
-
+		
 		// You could also access it in the user's session 
 		// without needing to make an additional API call
 		console.log('Session token: %s', user.session.token); 
-
+		
 		// Adds a new notification email address to the user
 		user.addNotificationEmail('bobthebuilder@gmail.com', function(err, result) {
 			if(err) return console.error(err);
@@ -132,7 +136,7 @@ Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 			
 			// View camera settings
 			console.log('Settings for Camera #1: %s', util.inspect(camera.settings));
-
+			
 			// Toggles the camera's visibility (public/private)
 			camera.toggle('private', function(err, result) { 
 				if(err) return console.error(err);
@@ -144,32 +148,16 @@ Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 				if(err) return console.error(err);
 				console.log('Value %s', (result ? 'has updated successfully' : 'was not updated')); // This is either true or false, depending on success
 			});
-			
+
 			// Takes a screenshot 
 			camera.capture(function(err, screenshot) { 
 				if(err) return console.error(err);
 				// You can also get the image type. It's usually a jpeg
 				console.log(screenshot.type);
 				// Writes the screenshot to file
-				screenshot.pipe(require('fs').createWriteStream('screenshot.jpeg'));
-			}); 
-			
-			/* This function has been temporarily disabled
-			// Record your camera locally (in seconds)
-			// This example shows to record for 10 seconds
-			camera.record(10, function(err, stream) { // 0 means don't stop recording
-				if(err) throw err;
-				// Listen for events
-				stream.on('data', function(data) {
-					console.log(data);
-				});
-				stream.on('error', function(error) {
-					console.log(error);
-				});
-				// Writes the stream to file
-				stream.pipe(require('fs').createWriteStream('out.flv')); 
-			});*/
-			
+				screenshot.pipe(require('fs').createWriteStream(util.format('screenshot_%s.jpeg', Date.now())));
+			});
+
 			// Find devices setup with notifications about this camera
 			camera.getNotificationDevices(function(err, devices) {
 				if(err) return console.error(err);
@@ -227,7 +215,7 @@ Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 						console.log('%s clip property `%s` = `%s`', (result ? 'Updated' : 'Failed to update'), pair['key'], pair['value']);
 						console.log('Calling description as property reveals new value as `%s`', selected.properties.description);
 					});
-					/*
+					/* 
 					// Example of deleting an existing clip  
 					selected.delete(function(err, result) {
 						if(err) return console.error(err);
@@ -238,11 +226,35 @@ Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 				}
 			}); 
 
-		// Subscriptions API
-		// Returns an array of subscriptions the camera has
-		camera.getSubscriptions(function(err, results) {
-			if(err) return console.error(err);
-			console.log(util.inspect(results));
+			// Subscriptions API
+			// Returns an array of subscriptions the camera has
+			camera.getSubscriptions(function(err, results) {
+				if(err) return console.error(err);
+				console.log(util.inspect(results));
+			});
+			
+			// Events - These are not considered real-time as any sort
+			// of delay is expected (latency between you and dropcam's servers)
+
+			// This event captures motion-only or motion w/sound events
+			camera.on('motion', function(motion) {
+				console.log('New motion event detected: %s', util.inspect(motion));
+			});
+
+			// This event captures sound-only events
+			camera.on('sound', function(sound) {
+				console.log('New sound event detected: %s', util.inspect(sound));
+			});
+
+			// This event captures any errors that take place
+			camera.on('error', function(error) {
+				console.log('Error: %s', error);
+			});
+
+			// This must be called in order to listen to any of events occuring. You
+			// can optionally pass in a `timeout` param if you want to increase/decrease
+			// the amount milliseconds to refresh events, default is 1000 ms
+			camera.listen(100); 
 		});
 	});
 ```
@@ -302,6 +314,16 @@ This function registers a new user to dropcam. It takes three parameters, `usern
 Due to wide variety of properties and settings varying per camera, you can access 
 all properties by extending the camera's properties, settings and user. You can see an 
 example of this in the above example.
+
+You can also call `.on(event, callback)` if you wish to receive the following
+motion/sound events. 
+
+### Event: 'motion'
+This event receives any motion events detected by this camera
+### Event: 'sound'
+This event receives any sound events detected by this camera
+### Event: 'error'
+This event receives any error events that occur
 
 ### .toggle(visibility, callback)
 This function will attempt to toggle the camera's visibility setting and return the resulting
@@ -366,17 +388,6 @@ create a new `Device` object. See above for an example.
 ### .pipe(out)
 You can call `.pipe` on the object and do what you wish with the buffer, such as writing 
 to file. See above for an example.
-
-## Stream
-### .pipe(out)
-You can call .pipe on the object and do what you wish with the buffer, such as writing to file.
-See above for an example.
-### .on(event, callback)
-You can listen for events on this stream.
-### Event: 'data'
-You can listen for incoming standard output on this stream.
-### Event: 'error'
-You can listen for incoming error output on this stream.
 
 ## Deprecated 
 ### .getDevicesWithNotifications
