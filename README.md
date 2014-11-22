@@ -316,7 +316,7 @@ all properties by extending the camera's properties, settings and user. You can 
 example of this in the above example.
 
 You can also call `.on(event, callback)` if you wish to receive the following
-motion/sound events. 
+motion/sound events. See below on how to capture these events.
 
 ### Event: 'motion'
 This event receives any motion events detected by this camera
@@ -356,6 +356,13 @@ the user. See above for an example.
 ### .getClips(callback)
 This function will attempt to get any video clips saved on the cloud and return an array of
 clips. See above for an example.
+
+### .listen(timeout)
+This function will begin monitoring any motion/sound events that occur with this camera. You
+can optionally pass a `timeout` parameter in the case you want to increase/decrease frequency 
+of API calls. The default delay is `1000 ms`. Any events captured will be emitted as soon as the 
+API knows of the event. Be aware of any delays such as latency to occur. See above for an example 
+and which events can be captured.
 
 ## Clips API
 ### .download(callback)
