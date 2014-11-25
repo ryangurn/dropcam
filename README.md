@@ -7,8 +7,6 @@ There is a beta program available to access official API resources, however they
 towards who can use it. Consider this experimental until further notice as it can
 break when their private API is updated. Report any bugs if you come across them.
 
-This project is actively maintained as of 11/21/2014.
-
 ## Features
 - Dropcam Scope
 	- Search API - Find any camera publically accessable
