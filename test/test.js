@@ -14,11 +14,6 @@
 			dropcam.login(credentials.username, credentials.password, function(err, user) {
 
 				describe('User', function() {
-					describe('#getSessionToken', function() {
-						it('Should return the session token associated with the user', function(done) {
-							
-						});
-					});
 					describe('#addNotificationEmail', function() {
 
 					});

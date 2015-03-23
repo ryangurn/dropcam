@@ -3,7 +3,7 @@
 
 	var dropcam = require('./lib/dropcam');
 	var util = require('util');
-
+	
 	var credentials = {
 		username: 'YOUR_DROPCAM_USERNAME',
 		password: 'YOUR_DROPCAM_PASSWORD'
@@ -29,20 +29,19 @@
 		console.log('Email: %s', user.properties.email);
 		console.log('Timezone: %s', user.properties.timezone);
 		
-		// Returns the current session token
+		// Deprecated as of 1.0.1: Will be removed on next release
 		user.getSessionToken(function(err, token) {
-			if(err) console.error(err);
-			console.log('Token on demand: %s', token); // prints out this user's token
+			if(err) return console.error(err);
+			console.log('Token on demand: %s', token);
 		});
-		
-		// You could also access it in the user's session 
-		// without needing to make an additional API call
+
+		// Retrieve the current session token
 		console.log('Session token: %s', user.session.token); 
 		
 		// Adds a new notification email address to the user
 		user.addNotificationEmail('bobthebuilder@gmail.com', function(err, result) {
 			if(err) return console.error(err);
-			console.log('New email: %s', result); // This object holds the id necessary to remove the email
+			console.log('New email: %s', util.inspect(result)); // This object holds the id necessary to remove the email
 
 			// Removes a notification email address from the user
 			user.removeNotificationEmail(result.id, function(err, deleted) {
@@ -53,18 +52,18 @@
 		
 		// Searchs the API for a camera associated with the public token
 		// Returns the camera associated with the public id
-		dropcam.search(user, '4fTZwY', function(err, camera) {
+		dropcam.search(user, 'Ab7UXY', function(err, camera) {
 			if(err) return console.error(err);
 			
 			// Entire camera (user, properties and settings)
-			console.log('Public camera: %s', camera);
+			console.log('Public camera: %s', util.inspect(camera));
 
 			// Captures a screenshot of this camera
 			camera.capture(function(err, screenshot) {
 				screenshot.pipe(require('fs').createWriteStream('pub_cam_snapshot.jpeg'));
 			});
 		});
-	
+		
 		// Returns an array of demo cameras
 		// You can use them as you would any other camera
 		dropcam.getDemos(user, function(err, cameras) {
@@ -89,15 +88,15 @@
 			// Toggles the camera's visibility (public/private)
 			camera.toggle('private', function(err, result) { 
 				if(err) return console.error(err);
-				console.log('Camera %s', (result ? ('visibility updated' : 'could not update visibility')); // returns public or private
+				console.log('Camera %s', (result ? 'visibility updated' : 'could not update visibility')); 
 			});
-			
+
 			// Updates a camera setting for this camera (such as disabling audio)
 			camera.update({ key: 'audio.enabled', value: true }, function(err, result) { 
 				if(err) return console.error(err);
 				console.log('Value %s', (result ? 'has updated successfully' : 'was not updated')); // This is either true or false, depending on success
 			});
-
+			
 			// Takes a screenshot 
 			camera.capture(function(err, screenshot) { 
 				if(err) return console.error(err);
@@ -171,15 +170,15 @@
 						// From here on, all properties of this object are now undefined and ready for GC
 						// You would want to update your collection to reflect those changes (simply recall getClips)
 						console.log('%s clip', (result ? 'Successfully deleted' : 'Unable to delete'));
-					}); */
+					}); */ 
 				}
 			}); 
-
+			
 			// Subscriptions API
 			// Returns an array of subscriptions the camera has
 			camera.getSubscriptions(function(err, results) {
 				if(err) return console.error(err);
-				console.log(util.inspect(results));
+				console.log('Subscriptions: %s', util.inspect(results));
 			});
 			
 			// Events - These are not considered real-time as any sort
@@ -204,6 +203,6 @@
 			// can optionally pass in a `timeout` param if you want to increase/decrease
 			// the amount milliseconds to refresh events, default is 1000 ms
 			camera.listen(100); 
-		});
+		}); 
 	});
 })();

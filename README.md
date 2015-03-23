@@ -7,6 +7,8 @@ There is a beta program available to access official API resources, however they
 towards who can use it. Consider this experimental until further notice as it can
 break when their private API is updated. Report any bugs if you come across them.
 
+This project is tested on `Debian GNU/Linux: Jessie`
+
 ## Features
 - Dropcam Scope
 	- Search API - Find any camera publically accessable
@@ -32,7 +34,7 @@ break when their private API is updated. Report any bugs if you come across them
 - Tests
 
 ## Live Video Streams
-This is currently broken as they've moved to encrypted streaming. There will probably be a fix on v1.0.1.
+This is currently broken as they've moved to encrypted streaming. Currently researching new ways to obtain this stream (as of 03/23/2015).
 
 ~~This project depends on the use of rtmpdump to capture live video streams. Since there is no reliable
 native functionality to capture RTMP streams at the moment (at least to my knowledge), 
@@ -40,7 +42,7 @@ you must download and have rtmpdump on your system PATH. To download, visit: htt
 Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 
 ## Installation
-    $ git clone https://github.com/opfl/dropcam.git
+    $ git clone https://github.com/alexlincoln/dropcam.git
 
 ## Tests
     $ npm test
@@ -78,15 +80,14 @@ Tested with RTMPDUMP 2.4 on Win 8.1 64bit.~~
 		console.log('Email: %s', user.properties.email);
 		console.log('Timezone: %s', user.properties.timezone);
 		
-		// Returns the current session token
-		user.getSessionToken(function(err, token) {
-			if(err) console.error(err);
-			console.log('Token on demand: %s', token); // prints out this user's token
-		});
-		
-		// You could also access it in the user's session 
-		// without needing to make an additional API call
-		console.log('Session token: %s', user.session.token); 
+		// Deprecated as of 1.0.1: Will be removed on next release
+        user.getSessionToken(function(err, token) {
+            if(err) return console.error(err);
+            console.log('Token on demand: %s', token);
+        });
+
+        // Retrieve the current session token
+        console.log('Session token: %s', user.session.token);		 
 		
 		// Adds a new notification email address to the user
 		user.addNotificationEmail('bobthebuilder@gmail.com', function(err, result) {
@@ -287,11 +288,6 @@ See above for an example.
 ## User API
 You can access several user properties and session details with a user.
 
-### .getSessionToken(callback)
-This function will returns the current user's session token. Alternatively,
-you can access the token by extending the user's session property without
-needing to make an API call. See above for an example.
-
 ### .addNotificationEmail(email, callback)
 This function will attempt to add a new `email` address for notifications and
 return an object containing the new address and id. The id is important to have
@@ -394,15 +390,19 @@ create a new `Device` object. See above for an example.
 You can call `.pipe` on the object and do what you wish with the buffer, such as writing 
 to file. See above for an example.
 
-## Deprecated 
+## Deprecated as of 1.0.0
 ### .getDevicesWithNotifications
 This function has been renamed to `.getNotificationDevices`
+
+## Deprecated as of 1.0.1
+### .getSessionToken
+This function is no longer used; you can access the session token from `User` node directly via the `session` key. See above for an example. Removed on the next release.
 
 ## Bugs/Errors
 If you come across any errors, feel free to submit a new issue or pull request.
 
 ## License
-Copyright (c) 2014 OPFL
+Copyright (c) 2014-2015 alexlincoln
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

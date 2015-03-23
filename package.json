@@ -1,6 +1,6 @@
 {
   "name": "dropcam",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Unofficial API for Dropcam",
   "main": "./lib/dropcam.js",
   "directories": {
@@ -16,13 +16,13 @@
   "scripts": {
     "test": "mocha"
   },
-  "repository": "https://github.com/opfl/dropcam",
+  "repository": "https://github.com/alexlincoln/dropcam",
   "keywords": [
     "dropcam",
     "video",
     "webcam",
     "stream"
   ],
-  "author": "opfl",
+  "author": "alexlincoln",
   "license": "MIT"
 }
